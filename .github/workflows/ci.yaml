@@ -3,8 +3,13 @@ name: CI/CD
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
+
+# Cancel in-progress runs on the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
