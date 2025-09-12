@@ -1,54 +1,308 @@
-[![Bolt.new: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.new)
+# bolt.diy
 
-# Bolt.new: AI-Powered Full-Stack Web Development in the Browser
+[![bolt.diy: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.diy)
 
-Bolt.new is an AI-powered web development agent that allows you to prompt, run, edit, and deploy full-stack applications directly from your browser—no local setup required. If you're here to build your own AI-powered web dev agent using the Bolt open source codebase, [click here to get started!](./CONTRIBUTING.md)
+Welcome to bolt.diy, the official open source version of Bolt.new, which allows you to choose the LLM that you use for each prompt! Currently, you can use OpenAI, Anthropic, Ollama, OpenRouter, Gemini, LMStudio, Mistral, xAI, HuggingFace, DeepSeek, or Groq models - and it is easily extended to use any other model supported by the Vercel AI SDK! See the instructions below for running this locally and extending it to include more models.
 
-## What Makes Bolt.new Different
+-----
+Check the [bolt.diy Docs](https://octotask.github.io/bolt.diy/) for more offical installation instructions and more informations.
 
-Claude, v0, etc are incredible- but you can't install packages, run backends or edit code. That’s where Bolt.new stands out:
+-----
+Also [this pinned post in our community](https://thinktank.ottomator.ai/t/videos-tutorial-helpful-content/3243) has a bunch of incredible resources for running and deploying bolt.diy yourself!
 
-- **Full-Stack in the Browser**: Bolt.new integrates cutting-edge AI models with an in-browser development environment powered by **StackBlitz’s WebContainers**. This allows you to:
-  - Install and run npm tools and libraries (like Vite, Next.js, and more)
-  - Run Node.js servers
-  - Interact with third-party APIs
-  - Deploy to production from chat
-  - Share your work via a URL
+We have also launched an experimental agent called the "bolt.diy Expert" that can answer common questions about bolt.diy. Find it here on the [oTTomator Live Agent Studio](https://studio.ottomator.ai/).
 
-- **AI with Environment Control**: Unlike traditional dev environments where the AI can only assist in code generation, Bolt.new gives AI models **complete control** over the entire  environment including the filesystem, node server, package manager, terminal, and browser console. This empowers AI agents to handle the entire app lifecycle—from creation to deployment.
+bolt.diy was originally started by [Cole Medin](https://www.youtube.com/@ColeMedin) but has quickly grown into a massive community effort to build the BEST open source AI coding assistant!
 
-Whether you’re an experienced developer, a PM or designer, Bolt.new allows you to build production-grade full-stack applications with ease.
+## Table of Contents
 
-For developers interested in building their own AI-powered development tools with WebContainers, check out the open-source Bolt codebase in this repo!
+- [Join the Community](#join-the-community)
+- [Requested Additions](#requested-additions)
+- [Features](#features)
+- [Setup](#setup)
+- [Run the Application](#run-the-application)
+- [Available Scripts](#available-scripts)
+- [Contributing](#contributing)
+- [Roadmap](#roadmap)
+- [FAQ](#faq)
 
-## Tips and Tricks
+## Project management
 
-Here are some tips to get the most out of Bolt.new:
+Bolt.diy is a community effort! Still, the core team of contributors aims at organizing the project in way that allows
+you to understand where the current areas of focus are.
 
-- **Be specific about your stack**: If you want to use specific frameworks or libraries (like Astro, Tailwind, ShadCN, or any other popular JavaScript framework), mention them in your initial prompt to ensure Bolt scaffolds the project accordingly.
+If you want to know what we are working on, what we are planning to work on, or if you want to contribute to the
+project, please check the [project management guide](./PROJECT.md) to get started easily.
 
-- **Use the enhance prompt icon**: Before sending your prompt, try clicking the 'enhance' icon to have the AI model help you refine your prompt, then edit the results before submitting.
 
-- **Scaffold the basics first, then add features**: Make sure the basic structure of your application is in place before diving into more advanced functionality. This helps Bolt understand the foundation of your project and ensure everything is wired up right before building out more advanced functionality.
+## Features
 
-- **Batch simple instructions**: Save time by combining simple instructions into one message. For example, you can ask Bolt to change the color scheme, add mobile responsiveness, and restart the dev server, all in one go saving you time and reducing API credit consumption significantly.
+- **AI-powered full-stack web development** for **NodeJS based applications** directly in your browser.
+- **Support for multiple LLMs** with an extensible architecture to integrate additional models.
+- **Attach images to prompts** for better contextual understanding.
+- **Integrated terminal** to view output of LLM-run commands.
+- **Revert code to earlier versions** for easier debugging and quicker changes.
+- **Download projects as ZIP** for easy portability Sync to a folder on the host.
+- **Integration-ready Docker support** for a hassle-free setup.
+- **Deploy** directly to **Netlify**
 
-## FAQs
+## Setup
 
-**Where do I sign up for a paid plan?**  
-Bolt.new is free to get started. If you need more AI tokens or want private projects, you can purchase a paid subscription in your [Bolt.new](https://bolt.new) settings, in the lower-left hand corner of the application. 
+If you're new to installing software from GitHub, don't worry! If you encounter any issues, feel free to submit an "issue" using the provided links or improve this documentation by forking the repository, editing the instructions, and submitting a pull request. The following instruction will help you get the stable branch up and running on your local machine in no time.
 
-**What happens if I hit the free usage limit?**  
-Once your free daily token limit is reached, AI interactions are paused until the next day or until you upgrade your plan.
+Let's get you up and running with the stable version of Bolt.DIY!
 
-**Is Bolt in beta?**  
-Yes, Bolt.new is in beta, and we are actively improving it based on feedback.
+## Quick Download
 
-**How can I report Bolt.new issues?**  
-Check out the [Issues section](https://github.com/stackblitz/bolt.new/issues) to report an issue or request a new feature. Please use the search feature to check if someone else has already submitted the same issue/request.
+[![Download Latest Release](https://img.shields.io/github/v/release/octotask/bolt.diy?label=Download%20Bolt&sort=semver)](https://github.com/octotask/bolt.diy/releases/latest) ← Click here to go the the latest release version!
 
-**What frameworks/libraries currently work on Bolt?**  
-Bolt.new supports most popular JavaScript frameworks and libraries. If it runs on StackBlitz, it will run on Bolt.new as well.
+- Next **click source.zip**
 
-**How can I add make sure my framework/project works well in bolt?**  
-We are excited to work with the JavaScript ecosystem to improve functionality in Bolt. Reach out to us via [hello@stackblitz.com](mailto:hello@stackblitz.com) to discuss how we can partner!
+## Prerequisites
+
+Before you begin, you'll need to install two important pieces of software:
+
+### Install Node.js
+
+Node.js is required to run the application.
+
+1. Visit the [Node.js Download Page](https://nodejs.org/en/download/)
+2. Download the "LTS" (Long Term Support) version for your operating system
+3. Run the installer, accepting the default settings
+4. Verify Node.js is properly installed:
+   - **For Windows Users**:
+     1. Press `Windows + R`
+     2. Type "sysdm.cpl" and press Enter
+     3. Go to "Advanced" tab → "Environment Variables"
+     4. Check if `Node.js` appears in the "Path" variable
+   - **For Mac/Linux Users**:
+     1. Open Terminal
+     2. Type this command:
+        ```bash
+        echo $PATH
+        ```
+     3. Look for `/usr/local/bin` in the output
+
+## Running the Application
+
+You have two options for running Bolt.DIY: directly on your machine or using Docker.
+
+### Option 1: Direct Installation (Recommended for Beginners)
+
+1. **Install Package Manager (pnpm)**:
+
+   ```bash
+   npm install -g pnpm
+   ```
+
+2. **Install Project Dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Start the Application**:
+
+   ```bash
+   pnpm run dev
+   ```
+   
+### Option 2: Using Docker
+
+This option requires some familiarity with Docker but provides a more isolated environment.
+
+#### Additional Prerequisite
+
+- Install Docker: [Download Docker](https://www.docker.com/)
+
+#### Steps:
+
+1. **Build the Docker Image**:
+
+   ```bash
+   # Using npm script:
+   npm run dockerbuild
+
+   # OR using direct Docker command:
+   docker build . --target bolt-ai-development
+   ```
+
+2. **Run the Container**:
+   ```bash
+   docker compose --profile development up
+   ```
+
+## Configuring API Keys and Providers
+
+### Adding Your API Keys
+
+Setting up your API keys in Bolt.DIY is straightforward:
+
+1. Open the home page (main interface)
+2. Select your desired provider from the dropdown menu
+3. Click the pencil (edit) icon
+4. Enter your API key in the secure input field
+
+![API Key Configuration Interface](./docs/images/api-key-ui-section.png)
+
+### Configuring Custom Base URLs
+
+For providers that support custom base URLs (such as Ollama or LM Studio), follow these steps:
+
+1. Click the settings icon in the sidebar to open the settings menu
+   ![Settings Button Location](./docs/images/bolt-settings-button.png)
+
+2. Navigate to the "Providers" tab
+3. Search for your provider using the search bar
+4. Enter your custom base URL in the designated field
+   ![Provider Base URL Configuration](./docs/images/provider-base-url.png)
+
+> **Note**: Custom base URLs are particularly useful when running local instances of AI models or using custom API endpoints.
+
+### Supported Providers
+
+- Ollama
+- LM Studio
+- OpenAILike
+
+## Setup Using Git (For Developers only)
+
+This method is recommended for developers who want to:
+
+- Contribute to the project
+- Stay updated with the latest changes
+- Switch between different versions
+- Create custom modifications
+
+#### Prerequisites
+
+1. Install Git: [Download Git](https://git-scm.com/downloads)
+
+#### Initial Setup
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone -b stable https://github.com/octotask/bolt.diy.git
+   ```
+
+2. **Navigate to Project Directory**:
+
+   ```bash
+   cd bolt.diy
+   ```
+
+3. **Install Dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+4. **Start the Development Server**:
+   ```bash
+   pnpm run dev
+   ```
+
+5. **(OPTIONAL)** Switch to the Main Branch if you want to use pre-release/testbranch:
+   ```bash
+   git checkout main
+   pnpm install
+   pnpm run dev
+   ```
+  Hint: Be aware that this can have beta-features and more likely got bugs than the stable release
+
+>**Open the WebUI to test (Default: http://localhost:5173)**
+>   - Beginngers: 
+>     - Try to use a sophisticated Provider/Model like Anthropic with Claude Sonnet 3.x Models to get best results
+>     - Explanation: The System Prompt currently implemented in bolt.diy cant cover the best performance for all providers and models out there. So it works better with some models, then other, even if the models itself are perfect for >programming
+>     - Future: Planned is a Plugin/Extentions-Library so there can be different System Prompts for different Models, which will help to get better results
+
+#### Staying Updated
+
+To get the latest changes from the repository:
+
+1. **Save Your Local Changes** (if any):
+
+   ```bash
+   git stash
+   ```
+
+2. **Pull Latest Updates**:
+
+   ```bash
+   git pull 
+   ```
+
+3. **Update Dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+4. **Restore Your Local Changes** (if any):
+   ```bash
+   git stash pop
+   ```
+
+#### Troubleshooting Git Setup
+
+If you encounter issues:
+
+1. **Clean Installation**:
+
+   ```bash
+   # Remove node modules and lock files
+   rm -rf node_modules pnpm-lock.yaml
+
+   # Clear pnpm cache
+   pnpm store prune
+
+   # Reinstall dependencies
+   pnpm install
+   ```
+
+2. **Reset Local Changes**:
+   ```bash
+   # Discard all local changes
+   git reset --hard origin/main
+   ```
+
+Remember to always commit your local changes or stash them before pulling updates to avoid conflicts.
+
+---
+
+## Available Scripts
+
+- **`pnpm run dev`**: Starts the development server.
+- **`pnpm run build`**: Builds the project.
+- **`pnpm run start`**: Runs the built application locally using Wrangler Pages.
+- **`pnpm run preview`**: Builds and runs the production build locally.
+- **`pnpm test`**: Runs the test suite using Vitest.
+- **`pnpm run typecheck`**: Runs TypeScript type checking.
+- **`pnpm run typegen`**: Generates TypeScript types using Wrangler.
+- **`pnpm run deploy`**: Deploys the project to Cloudflare Pages.
+- **`pnpm run lint:fix`**: Automatically fixes linting issues.
+
+---
+
+## Contributing
+
+We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to get started.
+
+---
+
+## Roadmap
+
+Explore upcoming features and priorities on our [Roadmap](https://roadmap.sh/r/ottodev-roadmap-2ovzo).
+
+---
+
+## FAQ
+
+For answers to common questions, issues, and to see a list of recommended models, visit our [FAQ Page](FAQ.md).
+
+
+# Licensing
+**Who needs a commercial WebContainer API license?**
+
+bolt.diy source code is distributed as MIT, but it uses WebContainers API that [requires licensing](https://webcontainers.io/enterprise) for production usage in a commercial, for-profit setting. (Prototypes or POCs do not require a commercial license.) If you're using the API to meet the needs of your customers, prospective customers, and/or employees, you need a license to ensure compliance with our Terms of Service. Usage of the API in violation of these terms may result in your access being revoked.

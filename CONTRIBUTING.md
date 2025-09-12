@@ -1,97 +1,117 @@
-[![Bolt Open Source Codebase](./public/social_preview_index.jpg)](https://bolt.new)
+# Contribution Guidelines
 
-> Welcome to the **Bolt** open-source codebase! This repo contains a simple example app using the core components from bolt.new to help you get started building **AI-powered software development tools** powered by StackBlitz’s **WebContainer API**.
+Welcome! This guide provides all the details you need to contribute effectively to the project. Thank you for helping us make **bolt.diy** a better tool for developers worldwide. 💡
 
-### Why Build with Bolt + WebContainer API
+---
 
-By building with the Bolt + WebContainer API you can create browser-based applications that let users **prompt, run, edit, and deploy** full-stack web apps directly in the browser, without the need for virtual machines. With WebContainer API, you can build apps that give AI direct access and full control over a **Node.js server**, **filesystem**, **package manager** and **dev terminal** inside your users browser tab. This powerful combination allows you to create a new class of development tools that support all major JavaScript libraries and Node packages right out of the box, all without remote environments or local installs.
+## 📋 Table of Contents
 
-### What’s the Difference Between Bolt (This Repo) and [Bolt.new](https://bolt.new)?
+1. [Code of Conduct](#code-of-conduct)
+2. [How Can I Contribute?](#how-can-i-contribute)
+3. [Pull Request Guidelines](#pull-request-guidelines)
+4. [Coding Standards](#coding-standards)
+5. [Development Setup](#development-setup)
+6. [Testing](#testing)
+7. [Deployment](#deployment)
+8. [Docker Deployment](#docker-deployment)
+9. [VS Code Dev Containers Integration](#vs-code-dev-containers-integration)
 
-- **Bolt.new**: This is the **commercial product** from StackBlitz—a hosted, browser-based AI development tool that enables users to prompt, run, edit, and deploy full-stack web applications directly in the browser. Built on top of the [Bolt open-source repo](https://github.com/stackblitz/bolt.new) and powered by the StackBlitz **WebContainer API**.
+---
 
-- **Bolt (This Repo)**: This open-source repository provides the core components used to make **Bolt.new**. This repo contains the UI interface for Bolt as well as the server components, built using [Remix Run](https://remix.run/). By leveraging this repo and StackBlitz’s **WebContainer API**, you can create your own AI-powered development tools and full-stack applications that run entirely in the browser.
+## 🛡️ Code of Conduct
 
-# Get Started Building with Bolt
+This project is governed by our **Code of Conduct**. By participating, you agree to uphold this code. Report unacceptable behavior to the project maintainers.
 
-Bolt combines the capabilities of AI with sandboxed development environments to create a collaborative experience where code can be developed by the assistant and the programmer together. Bolt combines [WebContainer API](https://webcontainers.io/api) with [Claude Sonnet 3.5](https://www.anthropic.com/news/claude-3-5-sonnet) using [Remix](https://remix.run/) and the [AI SDK](https://sdk.vercel.ai/).
+---
 
-### WebContainer API
+## 🛠️ How Can I Contribute?
 
-Bolt uses [WebContainers](https://webcontainers.io/) to run generated code in the browser. WebContainers provide Bolt with a full-stack sandbox environment using [WebContainer API](https://webcontainers.io/api). WebContainers run full-stack applications directly in the browser without the cost and security concerns of cloud hosted AI agents. WebContainers are interactive and editable, and enables Bolt's AI to run code and understand any changes from the user.
+### 1️⃣ Reporting Bugs or Feature Requests
 
-The [WebContainer API](https://webcontainers.io) is free for personal and open source usage. If you're building an application for commercial usage, you can learn more about our [WebContainer API commercial usage pricing here](https://stackblitz.com/pricing#webcontainer-api).
+- Check the [issue tracker](#) to avoid duplicates.
+- Use issue templates (if available).
+- Provide detailed, relevant information and steps to reproduce bugs.
 
-### Remix App
+### 2️⃣ Code Contributions
 
-Bolt is built with [Remix](https://remix.run/) and
-deployed using [CloudFlare Pages](https://pages.cloudflare.com/) and
-[CloudFlare Workers](https://workers.cloudflare.com/).
+1. Fork the repository.
+2. Create a feature or fix branch.
+3. Write and test your code.
+4. Submit a pull request (PR).
 
-### AI SDK Integration
+### 3️⃣ Join as a Core Contributor
 
-Bolt uses the [AI SDK](https://github.com/vercel/ai) to integrate with AI
-models. At this time, Bolt supports using Anthropic's Claude Sonnet 3.5.
-You can get an API key from the [Anthropic API Console](https://console.anthropic.com/) to use with Bolt.
-Take a look at how [Bolt uses the AI SDK](https://github.com/stackblitz/bolt.new/tree/main/app/lib/.server/llm)
+Interested in maintaining and growing the project? Fill out our [Contributor Application Form](https://forms.gle/TBSteXSDCtBDwr5m7).
 
-## Prerequisites
+---
 
-Before you begin, ensure you have the following installed:
+## ✅ Pull Request Guidelines
 
-- Node.js (v20.15.1)
-- pnpm (v9.4.0)
+### PR Checklist
 
-## Setup
+- Branch from the **main** branch.
+- Update documentation, if needed.
+- Test all functionality manually.
+- Focus on one feature/bug per PR.
 
-1. Clone the repository (if you haven't already):
+### Review Process
 
-```bash
-git clone https://github.com/stackblitz/bolt.new.git
-```
+1. Manual testing by reviewers.
+2. At least one maintainer review required.
+3. Address review comments.
+4. Maintain a clean commit history.
 
-2. Install dependencies:
+---
 
-```bash
-pnpm install
-```
+## 📏 Coding Standards
 
-3. Create a `.env.local` file in the root directory and add your Anthropic API key:
+### General Guidelines
 
-```
-ANTHROPIC_API_KEY=XXX
-```
+- Follow existing code style.
+- Comment complex logic.
+- Keep functions small and focused.
+- Use meaningful variable names.
 
-Optionally, you can set the debug level:
+---
 
-```
-VITE_LOG_LEVEL=debug
-```
+## 🖥️ Development Setup
 
-**Important**: Never commit your `.env.local` file to version control. It's already included in .gitignore.
+### 1️⃣ Initial Setup
 
-## Available Scripts
+- Clone the repository:
+  ```bash
+  git clone https://github.com/octotask/bolt.diy.git
+  ```
+- Install dependencies:
+  ```bash
+  pnpm install
+  ```
+- Set up environment variables:
+  1. Rename `.env.example` to `.env.local`.
+  2. Add your API keys:
+     ```bash
+     GROQ_API_KEY=XXX
+     HuggingFace_API_KEY=XXX
+     OPENAI_API_KEY=XXX
+     ...
+     ```
+  3. Optionally set:
+     - Debug level: `VITE_LOG_LEVEL=debug`
+     - Context size: `DEFAULT_NUM_CTX=32768`
 
-- `pnpm run dev`: Starts the development server.
-- `pnpm run build`: Builds the project.
-- `pnpm run start`: Runs the built application locally using Wrangler Pages. This script uses `bindings.sh` to set up necessary bindings so you don't have to duplicate environment variables.
-- `pnpm run preview`: Builds the project and then starts it locally, useful for testing the production build. Note, HTTP streaming currently doesn't work as expected with `wrangler pages dev`.
-- `pnpm test`: Runs the test suite using Vitest.
-- `pnpm run typecheck`: Runs TypeScript type checking.
-- `pnpm run typegen`: Generates TypeScript types using Wrangler.
-- `pnpm run deploy`: Builds the project and deploys it to Cloudflare Pages.
+**Note**: Never commit your `.env.local` file to version control. It’s already in `.gitignore`.
 
-## Development
-
-To start the development server:
+### 2️⃣ Run Development Server
 
 ```bash
 pnpm run dev
 ```
 
-This will start the Remix Vite development server.
+**Tip**: Use **Google Chrome Canary** for local testing.
 
-## Testing
+---
+
+## 🧪 Testing
 
 Run the test suite with:
 
@@ -99,12 +119,124 @@ Run the test suite with:
 pnpm test
 ```
 
-## Deployment
+---
 
-To deploy the application to Cloudflare Pages:
+## 🚀 Deployment
+
+### Deploy to Cloudflare Pages
 
 ```bash
 pnpm run deploy
 ```
 
-Make sure you have the necessary permissions and Wrangler is correctly configured for your Cloudflare account.
+Ensure you have required permissions and that Wrangler is configured.
+
+---
+
+## 🐳 Docker Deployment
+
+This section outlines the methods for deploying the application using Docker. The processes for **Development** and **Production** are provided separately for clarity.
+
+---
+
+### 🧑‍💻 Development Environment
+
+#### Build Options
+
+**Option 1: Helper Scripts**
+
+```bash
+# Development build
+npm run dockerbuild
+```
+
+**Option 2: Direct Docker Build Command**
+
+```bash
+docker build . --target bolt-ai-development
+```
+
+**Option 3: Docker Compose Profile**
+
+```bash
+docker compose --profile development up
+```
+
+#### Running the Development Container
+
+```bash
+docker run -p 5173:5173 --env-file .env.local bolt-ai:development
+```
+
+---
+
+### 🏭 Production Environment
+
+#### Build Options
+
+**Option 1: Helper Scripts**
+
+```bash
+# Production build
+npm run dockerbuild:prod
+```
+
+**Option 2: Direct Docker Build Command**
+
+```bash
+docker build . --target bolt-ai-production
+```
+
+**Option 3: Docker Compose Profile**
+
+```bash
+docker compose --profile production up
+```
+
+#### Running the Production Container
+
+```bash
+docker run -p 5173:5173 --env-file .env.local bolt-ai:production
+```
+
+---
+
+### Coolify Deployment
+
+For an easy deployment process, use [Coolify](https://github.com/coollabsio/coolify):
+
+1. Import your Git repository into Coolify.
+2. Choose **Docker Compose** as the build pack.
+3. Configure environment variables (e.g., API keys).
+4. Set the start command:
+   ```bash
+   docker compose --profile production up
+   ```
+
+---
+
+## 🛠️ VS Code Dev Containers Integration
+
+The `docker-compose.yaml` configuration is compatible with **VS Code Dev Containers**, making it easy to set up a development environment directly in Visual Studio Code.
+
+### Steps to Use Dev Containers
+
+1. Open the command palette in VS Code (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+2. Select **Dev Containers: Reopen in Container**.
+3. Choose the **development** profile when prompted.
+4. VS Code will rebuild the container and open it with the pre-configured environment.
+
+---
+
+## 🔑 Environment Variables
+
+Ensure `.env.local` is configured correctly with:
+
+- API keys.
+- Context-specific configurations.
+
+Example for the `DEFAULT_NUM_CTX` variable:
+
+```bash
+DEFAULT_NUM_CTX=24576 # Uses 32GB VRAM
+```

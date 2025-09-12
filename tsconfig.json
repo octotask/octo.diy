@@ -1,26 +1,42 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["@remix-run/cloudflare", "vite/client", "@cloudflare/workers-types/2023-07-01"],
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
+    /* ---- Environment ---- */
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "target": "ESNext",
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+
+    /* ---- Type Definitions ---- */
+    "types": [
+      "vite/client",
+      "@remix-run/cloudflare",
+      "@cloudflare/workers-types/2023-07-01",
+      "@types/dom-speech-recognition"
+      /* ⚠️ Removed "electron" to prevent Node timers leaking
+         Add it only in a separate tsconfig.electron.json if needed */
+    ],
+
+    /* ---- Strictness ---- */
     "strict": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+
+    /* ---- Module Handling ---- */
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
+
+    /* ---- Build ---- */
+    "noEmit": true,
+    "skipLibCheck": true, // keep for faster builds with mixed types
+
+    /* ---- Paths ---- */
     "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
-    },
-
-    // vite takes care of building everything, not tsc
-    "noEmit": true
+    }
   },
   "include": [
     "**/*.ts",
