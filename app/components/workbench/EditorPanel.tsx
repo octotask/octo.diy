@@ -1,6 +1,7 @@
 import { useStore } from '@nanostores/react';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle, type ImperativePanelHandle } from 'react-resizable-panels';
+import { memo, useMemo } from 'react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import * as Tabs from '@radix-ui/react-tabs';
 import {
   CodeMirrorEditor,
   type EditorDocument,
@@ -9,20 +10,21 @@ import {
   type OnSaveCallback as OnEditorSave,
   type OnScrollCallback as OnEditorScroll,
 } from '~/components/editor/codemirror/CodeMirrorEditor';
-import { IconButton } from '~/components/ui/IconButton';
 import { PanelHeader } from '~/components/ui/PanelHeader';
 import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
-import { shortcutEventEmitter } from '~/lib/hooks';
 import type { FileMap } from '~/lib/stores/files';
+import type { FileHistory } from '~/types/actions';
 import { themeStore } from '~/lib/stores/theme';
-import { workbenchStore } from '~/lib/stores/workbench';
-import { classNames } from '~/utils/classNames';
 import { WORK_DIR } from '~/utils/constants';
 import { renderLogger } from '~/utils/logger';
 import { isMobile } from '~/utils/mobile';
 import { FileBreadcrumb } from './FileBreadcrumb';
 import { FileTree } from './FileTree';
-import { Terminal, type TerminalRef } from './terminal/Terminal';
+import { DEFAULT_TERMINAL_SIZE, TerminalTabs } from './terminal/TerminalTabs';
+import { workbenchStore } from '~/lib/stores/workbench';
+import { Search } from './Search'; // <-- Ensure Search is imported
+import { classNames } from '~/utils/classNames'; // <-- Import classNames if not already present
+import { LockManager } from './LockManager'; // <-- Import LockManager
 
 interface EditorPanelProps {
   files?: FileMap;
@@ -30,6 +32,7 @@ interface EditorPanelProps {
   editorDocument?: EditorDocument;
   selectedFile?: string | undefined;
   isStreaming?: boolean;
+  fileHistory?: Record<string, FileHistory>;
   onEditorChange?: OnEditorChange;
   onEditorScroll?: OnEditorScroll;
   onFileSelect?: (value?: string) => void;
@@ -37,8 +40,6 @@ interface EditorPanelProps {
   onFileReset?: () => void;
 }
 
-const MAX_TERMINALS = 3;
-const DEFAULT_TERMINAL_SIZE = 25;
 const DEFAULT_EDITOR_SIZE = 100 - DEFAULT_TERMINAL_SIZE;
 
 const editorSettings: EditorSettings = { tabSize: 2 };
@@ -50,6 +51,7 @@ export const EditorPanel = memo(
     editorDocument,
     selectedFile,
     isStreaming,
+    fileHistory,
     onFileSelect,
     onEditorChange,
     onEditorScroll,
@@ -61,13 +63,6 @@ export const EditorPanel = memo(
     const theme = useStore(themeStore);
     const showTerminal = useStore(workbenchStore.showTerminal);
 
-    const terminalRefs = useRef<Array<TerminalRef | null>>([]);
-    const terminalPanelRef = useRef<ImperativePanelHandle>(null);
-    const terminalToggledByShortcut = useRef(false);
-
-    const [activeTerminal, setActiveTerminal] = useState(0);
-    const [terminalCount, setTerminalCount] = useState(1);
-
     const activeFileSegments = useMemo(() => {
       if (!editorDocument) {
         return undefined;
@@ -77,72 +72,76 @@ export const EditorPanel = memo(
     }, [editorDocument]);
 
     const activeFileUnsaved = useMemo(() => {
-      return editorDocument !== undefined && unsavedFiles?.has(editorDocument.filePath);
+      if (!editorDocument || !unsavedFiles) {
+        return false;
+      }
+
+      // Make sure unsavedFiles is a Set before calling has()
+      return unsavedFiles instanceof Set && unsavedFiles.has(editorDocument.filePath);
     }, [editorDocument, unsavedFiles]);
-
-    useEffect(() => {
-      const unsubscribeFromEventEmitter = shortcutEventEmitter.on('toggleTerminal', () => {
-        terminalToggledByShortcut.current = true;
-      });
-
-      const unsubscribeFromThemeStore = themeStore.subscribe(() => {
-        for (const ref of Object.values(terminalRefs.current)) {
-          ref?.reloadStyles();
-        }
-      });
-
-      return () => {
-        unsubscribeFromEventEmitter();
-        unsubscribeFromThemeStore();
-      };
-    }, []);
-
-    useEffect(() => {
-      const { current: terminal } = terminalPanelRef;
-
-      if (!terminal) {
-        return;
-      }
-
-      const isCollapsed = terminal.isCollapsed();
-
-      if (!showTerminal && !isCollapsed) {
-        terminal.collapse();
-      } else if (showTerminal && isCollapsed) {
-        terminal.resize(DEFAULT_TERMINAL_SIZE);
-      }
-
-      terminalToggledByShortcut.current = false;
-    }, [showTerminal]);
-
-    const addTerminal = () => {
-      if (terminalCount < MAX_TERMINALS) {
-        setTerminalCount(terminalCount + 1);
-        setActiveTerminal(terminalCount);
-      }
-    };
 
     return (
       <PanelGroup direction="vertical">
         <Panel defaultSize={showTerminal ? DEFAULT_EDITOR_SIZE : 100} minSize={20}>
           <PanelGroup direction="horizontal">
-            <Panel defaultSize={20} minSize={10} collapsible>
-              <div className="flex flex-col border-r border-bolt-elements-borderColor h-full">
-                <PanelHeader>
-                  <div className="i-ph:tree-structure-duotone shrink-0" />
-                  Files
-                </PanelHeader>
-                <FileTree
-                  className="h-full"
-                  files={files}
-                  hideRoot
-                  unsavedFiles={unsavedFiles}
-                  rootFolder={WORK_DIR}
-                  selectedFile={selectedFile}
-                  onFileSelect={onFileSelect}
-                />
+            <Panel defaultSize={20} minSize={15} collapsible className="border-r border-bolt-elements-borderColor">
+              <div className="h-full">
+                <Tabs.Root defaultValue="files" className="flex flex-col h-full">
+                  <PanelHeader className="w-full text-sm font-medium text-bolt-elements-textSecondary px-1">
+                    <div className="h-full flex-shrink-0 flex items-center justify-between w-full">
+                      <Tabs.List className="h-full flex-shrink-0 flex items-center">
+                        <Tabs.Trigger
+                          value="files"
+                          className={classNames(
+                            'h-full bg-transparent hover:bg-bolt-elements-background-depth-3 py-0.5 px-2 rounded-lg text-sm font-medium text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary data-[state=active]:text-bolt-elements-textPrimary',
+                          )}
+                        >
+                          Files
+                        </Tabs.Trigger>
+                        <Tabs.Trigger
+                          value="search"
+                          className={classNames(
+                            'h-full bg-transparent hover:bg-bolt-elements-background-depth-3 py-0.5 px-2 rounded-lg text-sm font-medium text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary data-[state=active]:text-bolt-elements-textPrimary',
+                          )}
+                        >
+                          Search
+                        </Tabs.Trigger>
+                        <Tabs.Trigger
+                          value="locks"
+                          className={classNames(
+                            'h-full bg-transparent hover:bg-bolt-elements-background-depth-3 py-0.5 px-2 rounded-lg text-sm font-medium text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary data-[state=active]:text-bolt-elements-textPrimary',
+                          )}
+                        >
+                          Locks
+                        </Tabs.Trigger>
+                      </Tabs.List>
+                    </div>
+                  </PanelHeader>
+
+                  <Tabs.Content value="files" className="flex-grow overflow-auto focus-visible:outline-none">
+                    <FileTree
+                      className="h-full"
+                      files={files}
+                      hideRoot
+                      unsavedFiles={unsavedFiles}
+                      fileHistory={fileHistory}
+                      rootFolder={WORK_DIR}
+                      selectedFile={selectedFile}
+                      onFileSelect={onFileSelect}
+                    />
+                  </Tabs.Content>
+
+                  <Tabs.Content value="search" className="flex-grow overflow-auto focus-visible:outline-none">
+                    <Search />
+                  </Tabs.Content>
+
+                  <Tabs.Content value="locks" className="flex-grow overflow-auto focus-visible:outline-none">
+                    <LockManager />
+                  </Tabs.Content>
+                </Tabs.Root>
               </div>
             </Panel>
+
             <PanelResizeHandle />
             <Panel className="flex flex-col" defaultSize={80} minSize={20}>
               <PanelHeader className="overflow-x-auto">
@@ -164,7 +163,7 @@ export const EditorPanel = memo(
                   </div>
                 )}
               </PanelHeader>
-              <div className="h-full flex-1 overflow-hidden">
+              <div className="h-full flex-1 overflow-hidden modern-scrollbar">
                 <CodeMirrorEditor
                   theme={theme}
                   editable={!isStreaming && editorDocument !== undefined}
@@ -180,76 +179,7 @@ export const EditorPanel = memo(
           </PanelGroup>
         </Panel>
         <PanelResizeHandle />
-        <Panel
-          ref={terminalPanelRef}
-          defaultSize={showTerminal ? DEFAULT_TERMINAL_SIZE : 0}
-          minSize={10}
-          collapsible
-          onExpand={() => {
-            if (!terminalToggledByShortcut.current) {
-              workbenchStore.toggleTerminal(true);
-            }
-          }}
-          onCollapse={() => {
-            if (!terminalToggledByShortcut.current) {
-              workbenchStore.toggleTerminal(false);
-            }
-          }}
-        >
-          <div className="h-full">
-            <div className="bg-bolt-elements-terminals-background h-full flex flex-col">
-              <div className="flex items-center bg-bolt-elements-background-depth-2 border-y border-bolt-elements-borderColor gap-1.5 min-h-[34px] p-2">
-                {Array.from({ length: terminalCount }, (_, index) => {
-                  const isActive = activeTerminal === index;
-
-                  return (
-                    <button
-                      key={index}
-                      className={classNames(
-                        'flex items-center text-sm cursor-pointer gap-1.5 px-3 py-2 h-full whitespace-nowrap rounded-full',
-                        {
-                          'bg-bolt-elements-terminals-buttonBackground text-bolt-elements-textPrimary': isActive,
-                          'bg-bolt-elements-background-depth-2 text-bolt-elements-textSecondary hover:bg-bolt-elements-terminals-buttonBackground':
-                            !isActive,
-                        },
-                      )}
-                      onClick={() => setActiveTerminal(index)}
-                    >
-                      <div className="i-ph:terminal-window-duotone text-lg" />
-                      Terminal {terminalCount > 1 && index + 1}
-                    </button>
-                  );
-                })}
-                {terminalCount < MAX_TERMINALS && <IconButton icon="i-ph:plus" size="md" onClick={addTerminal} />}
-                <IconButton
-                  className="ml-auto"
-                  icon="i-ph:caret-down"
-                  title="Close"
-                  size="md"
-                  onClick={() => workbenchStore.toggleTerminal(false)}
-                />
-              </div>
-              {Array.from({ length: terminalCount }, (_, index) => {
-                const isActive = activeTerminal === index;
-
-                return (
-                  <Terminal
-                    key={index}
-                    className={classNames('h-full overflow-hidden', {
-                      hidden: !isActive,
-                    })}
-                    ref={(ref) => {
-                      terminalRefs.current.push(ref);
-                    }}
-                    onTerminalReady={(terminal) => workbenchStore.attachTerminal(terminal)}
-                    onTerminalResize={(cols, rows) => workbenchStore.onTerminalResize(cols, rows)}
-                    theme={theme}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </Panel>
+        <TerminalTabs />
       </PanelGroup>
     );
   },
