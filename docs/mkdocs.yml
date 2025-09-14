@@ -1,4 +1,4 @@
-site_name: octo.diy Docs
+site_name: bolt.diy Docs
 site_dir: ../site
 theme:
   name: material
@@ -31,25 +31,25 @@ theme:
     repo: fontawesome/brands/github
   # logo: assets/logo.png
   # favicon: assets/logo.png
-repo_name: octo.diy
-repo_url: https://github.com/octotask/octo.diy
+repo_name: bolt.diy
+repo_url: https://github.com/stackblitz-labs/bolt.diy
 edit_uri: ''
 
 extra:
   generator: false
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/octotask/octo.diy
-      name: octo.diy
+      link: https://github.com/stackblitz-labs/bolt.diy
+      name: bolt.diy
     - icon: fontawesome/brands/discourse
       link: https://thinktank.ottomator.ai/
-      name: octo.diy Discourse
+      name: bolt.diy Discourse
     - icon: fontawesome/brands/x-twitter
       link: https://x.com/bolt_diy
-      name: octo.diy on X
+      name: bolt.diy on X
     - icon: fontawesome/brands/bluesky
-      link: https://bsky.app/profile/octo.diy
-      name: octo.diy on Bluesky
+      link: https://bsky.app/profile/bolt.diy
+      name: bolt.diy on Bluesky
 
 markdown_extensions:
   - pymdownx.highlight:

@@ -1,4 +1,4 @@
-appId: com.stackblitz.octo.diy
+appId: com.stackblitz.bolt.diy
 productName: Bolt Local
 directories:
   buildResources: build
@@ -33,7 +33,6 @@ win:
   icon: assets/icons/icon.ico
   target:
     - nsis
-  signDlls: false
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
 
 linux:

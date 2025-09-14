@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["electron", "node"]
-  },
-  "include": ["electron/**/*"]
-}
