@@ -36,10 +36,10 @@ type Artifacts = MapStore<Record<string, ArtifactState>>;
 export type WorkbenchViewType = 'code' | 'diff' | 'preview';
 
 export class WorkbenchStore {
-  #previewsStore = new PreviewsStore(webcontainer);
-  #filesStore = new FilesStore(webcontainer);
-  #editorStore = new EditorStore(this.#filesStore);
-  #terminalStore = new TerminalStore(webcontainer);
+  #previewsStore: PreviewsStore;
+  #filesStore: FilesStore;
+  #editorStore: EditorStore;
+  #terminalStore: TerminalStore;
 
   #reloadedMessages = new Set<string>();
 
@@ -57,7 +57,12 @@ export class WorkbenchStore {
   modifiedFiles = new Set<string>();
   artifactIdList: string[] = [];
   #globalExecutionQueue = Promise.resolve();
-  constructor() {
+  constructor(hot: ImportMeta['hot'] = import.meta.hot) {
+    this.#previewsStore = new PreviewsStore(webcontainer);
+    this.#filesStore = new FilesStore(webcontainer, hot);
+    this.#editorStore = new EditorStore(this.#filesStore, hot);
+    this.#terminalStore = new TerminalStore(webcontainer);
+
     if (import.meta.hot) {
       import.meta.hot.data.artifacts = this.artifacts;
       import.meta.hot.data.unsavedFiles = this.unsavedFiles;
@@ -941,4 +946,4 @@ export class WorkbenchStore {
   }
 }
 
-export const workbenchStore = new WorkbenchStore();
+export const workbenchStore = new WorkbenchStore(import.meta.hot);

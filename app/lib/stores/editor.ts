@@ -1,7 +1,8 @@
-import { atom, computed, map, type MapStore, type WritableAtom } from 'nanostores';
+import { atom, computed, map, type MapStore, type WritableAtom, type ReadableAtom } from 'nanostores';
 import type { EditorDocument, ScrollPosition } from '~/components/editor/codemirror/CodeMirrorEditor';
 import type { FileMap, FilesStore } from './files';
 import { createScopedLogger } from '~/utils/logger';
+import { diff_match_patch } from 'diff-match-patch';
 
 export type EditorDocuments = Record<string, EditorDocument>;
 
@@ -12,23 +13,27 @@ const logger = createScopedLogger('EditorStore');
 export class EditorStore {
   #filesStore: FilesStore;
 
-  selectedFile: SelectedFile = import.meta.hot?.data.selectedFile ?? atom<string | undefined>();
-  documents: MapStore<EditorDocuments> = import.meta.hot?.data.documents ?? map({});
+  selectedFile: SelectedFile;
+  documents: MapStore<EditorDocuments>;
+  currentDocument: ReadableAtom<EditorDocument | undefined>;
 
-  currentDocument = computed([this.documents, this.selectedFile], (documents, selectedFile) => {
-    if (!selectedFile) {
-      return undefined;
-    }
-
-    return documents[selectedFile];
-  });
-
-  constructor(filesStore: FilesStore) {
+  constructor(filesStore: FilesStore, hot: ImportMeta['hot'] = import.meta.hot) {
     this.#filesStore = filesStore;
 
-    if (import.meta.hot) {
-      import.meta.hot.data.documents = this.documents;
-      import.meta.hot.data.selectedFile = this.selectedFile;
+    this.selectedFile = hot?.data.selectedFile ?? atom<string | undefined>();
+    this.documents = hot?.data.documents ?? map({});
+
+    this.currentDocument = computed([this.documents, this.selectedFile], (documents, selectedFile) => {
+      if (!selectedFile) {
+        return undefined;
+      }
+
+      return documents[selectedFile];
+    });
+
+    if (hot) {
+      hot.data.documents = this.documents;
+      hot.data.selectedFile = this.selectedFile;
     }
   }
 
@@ -50,7 +55,7 @@ export class EditorStore {
               {
                 value: dirent.content,
                 filePath,
-                isBinary: dirent.isBinary, // Add this line
+                isBinary: dirent.isBinary,
                 scroll: previousDocument?.scroll,
               },
             ] as [string, EditorDocument];
@@ -94,19 +99,20 @@ export class EditorStore {
       return;
     }
 
-    /*
-     * For scoped locks, we would need to implement diff checking here
-     * to determine if the edit is modifying existing code or just adding new code
-     * This is a more complex feature that would be implemented in a future update
-     */
-
     const currentContent = documentState.value;
     const contentChanged = currentContent !== newContent;
 
     if (contentChanged) {
+      const dmp = new diff_match_patch();
+      const diff = dmp.diff_main(currentContent, newContent);
+      dmp.diff_cleanupSemantic(diff);
+
+      const patches = dmp.patch_make(diff);
+      const [patchedContent] = dmp.patch_apply(patches, currentContent);
+
       this.documents.setKey(filePath, {
         ...documentState,
-        value: newContent,
+        value: patchedContent,
       });
     }
   }

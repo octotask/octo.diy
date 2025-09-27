@@ -21,11 +21,11 @@ if ! pnpm typecheck; then
     exit 1
 fi
 
-# Run lint
-echo "Running lint..."
-if ! pnpm lint; then
-    echo "❌ Linting failed! Run 'pnpm lint:fix' to fix the easy issues."
-    echo "Once you're done, don't forget to add your beautification to the commit! 🤩"
+# Run lint-staged
+echo "Running lint-staged..."
+if ! npx lint-staged; then
+    echo "❌ Linting and formatting failed! Please review the errors above."
+    echo "lint-staged should have fixed most issues, just add the changes to your commit! 🚀"
     exit 1
 fi
 

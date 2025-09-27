@@ -4,6 +4,7 @@ import { defineConfig, type ViteDevServer } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { visualizer } from 'rollup-plugin-visualizer';
 import * as dotenv from 'dotenv';
 
 // Load environment variables from multiple files
@@ -56,6 +57,10 @@ export default defineConfig((config) => {
       tsconfigPaths(),
       chrome129IssuePlugin(),
       config.mode === 'production' && optimizeCssModules({ apply: 'build' }),
+      visualizer({
+        open: true,
+        filename: 'bundle-stats.html',
+      }),
     ],
     envPrefix: [
       'VITE_',
@@ -73,6 +78,9 @@ export default defineConfig((config) => {
       },
     },
     test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./tests/setup.ts', './tests/component-setup.ts'],
       exclude: [
         '**/node_modules/**',
         '**/dist/**',
